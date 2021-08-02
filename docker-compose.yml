@@ -9,7 +9,7 @@ services:
     ports:
       - "27017:27017"
   api:
-    conatiner_name: api_container
+    container_name: api_container
     build: .
     image: clean_node_api
     restart: always
