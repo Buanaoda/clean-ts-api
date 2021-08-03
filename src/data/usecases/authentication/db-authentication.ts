@@ -1,6 +1,6 @@
-import { Authentication, AuthenticationModel } from '../../../domain/usecases/authentication'
-import { HashComparer, Encrypter } from '../../protocols/criptography'
-import { LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '../../protocols/db'
+import { Authentication, AuthenticationModel } from '../../../domain/usecases/authentication';
+import { HashComparer, Encrypter } from '../../protocols/criptography';
+import { LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '../../protocols/db';
 
 export class DbAuthentication implements Authentication {
   constructor (
@@ -11,15 +11,15 @@ export class DbAuthentication implements Authentication {
   ) {}
 
   async auth (authentication: AuthenticationModel): Promise<string> {
-    const account = await this.loadAccountByEmailRepository.loadByEmail(authentication.email)
+    const account = await this.loadAccountByEmailRepository.loadByEmail(authentication.email);
     if (account) {
-      const isValid = await this.hashComparer.compare(authentication.password, account.password)
+      const isValid = await this.hashComparer.compare(authentication.password, account.password);
       if (isValid) {
-        const accessToken = await this.encrypter.encrypt(account.id)
-        await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
-        return accessToken
+        const accessToken = await this.encrypter.encrypt(account.id);
+        await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken);
+        return accessToken;
       }
     }
-    return null
+    return null;
   }
 }

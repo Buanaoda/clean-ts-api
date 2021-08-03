@@ -1,24 +1,24 @@
-import request from 'supertest'
-import app from '../config/app'
-import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
-import { Collection } from 'mongodb'
-import { hash } from 'bcrypt'
+import request from 'supertest';
+import app from '../config/app';
+import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper';
+import { Collection } from 'mongodb';
+import { hash } from 'bcrypt';
 
-let accountCollection: Collection
+let accountCollection: Collection;
 
 describe('Login Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL)
-  })
+    await MongoHelper.connect(process.env.MONGO_URL);
+  });
 
   afterAll(async () => {
-    await MongoHelper.disconnect()
-  })
+    await MongoHelper.disconnect();
+  });
 
   beforeEach(async () => {
-    accountCollection = await MongoHelper.getCollection('accounts')
-    await accountCollection.deleteMany({})
-  })
+    accountCollection = await MongoHelper.getCollection('accounts');
+    await accountCollection.deleteMany({});
+  });
 
   describe('POST /signup', () => {
     test('Should return 200 on signup', async () => {
@@ -30,27 +30,27 @@ describe('Login Routes', () => {
           password: '123',
           passwordConfirmation: '123'
         })
-        .expect(200)
-    })
-  })
+        .expect(200);
+    });
+  });
 
   describe('POST /login', () => {
     test('Should return 200 on login', async () => {
-      const salt = 12
-      const hashedPassword = await hash('123', salt)
+      const salt = 12;
+      const hashedPassword = await hash('123', salt);
       await accountCollection.insertOne({
         name: 'Rodrigo',
         email: 'rodrigo@mail.com',
         password: hashedPassword
-      })
+      });
       await request(app)
         .post('/api/login')
         .send({
           email: 'rodrigo@mail.com',
           password: '123'
         })
-        .expect(200)
-    })
+        .expect(200);
+    });
 
     test('Should return 401 on login with invalid credentials', async () => {
       await request(app)
@@ -59,7 +59,7 @@ describe('Login Routes', () => {
           email: 'rodrigo@mail.com',
           password: '123'
         })
-        .expect(401)
-    })
-  })
-})
+        .expect(401);
+    });
+  });
+});
