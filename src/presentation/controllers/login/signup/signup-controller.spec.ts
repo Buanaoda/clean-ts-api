@@ -1,8 +1,8 @@
 import { SignUpController } from './signup-controller';
-import { EmailInUseError, MissingParamError, ServerError } from '../../errors';
+import { EmailInUseError, MissingParamError, ServerError } from '../../../errors';
 import { AccountModel, AddAccount, AddAccountModel, Validation } from './signup-controller-protocols';
-import { HttpRequest } from '../../protocols';
-import { badRequest, serverError, ok, forbidden } from '../../helpers/http/http-helper';
+import { HttpRequest } from '../../../protocols';
+import { badRequest, serverError, ok, forbidden } from '../../../helpers/http/http-helper';
 import { Authentication, AuthenticationModel } from '../login/login-controller-protocols';
 
 const makeValidation = (): Validation => {
