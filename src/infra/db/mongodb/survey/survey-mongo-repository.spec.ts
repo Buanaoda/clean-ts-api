@@ -37,10 +37,23 @@ describe('Survey Mongo Repository', () => {
     return new SurveyMongoRepository();
   };
 
-  test('Should add a survey on success', async () => {
-    const sut = makeSut();
-    await sut.add(makeFakeSurveyData());
-    const survey = await surveyCollection.findOne({ question: 'any_question' });
-    expect(survey).toBeTruthy();
+  describe('ADD', () => {
+    test('Should add a survey on success', async () => {
+      const sut = makeSut();
+      await sut.add(makeFakeSurveyData());
+      const survey = await surveyCollection.findOne({ question: 'any_question' });
+      expect(survey).toBeTruthy();
+    });
+  });
+
+  describe('LOAD ALL', () => {
+    test('Should load all surveys on success', async () => {
+      await surveyCollection.insertMany([makeFakeSurveyData(), makeFakeSurveyData()]);
+      const sut = makeSut();
+      const surveys = await sut.loadAll();
+      expect(surveys.length).toBe(2);
+      expect(surveys[0].question).toBe('any_question');
+      expect(surveys[1].question).toBe('any_question');
+    });
   });
 });
