@@ -1,6 +1,6 @@
 import { LoadSurveyById } from '@/domain/usecases/survey/load-survey-by-id';
 import { InvalidParamError } from '@/presentation/errors';
-import { forbidden } from '@/presentation/helpers/http/http-helper';
+import { forbidden, serverError } from '@/presentation/helpers/http/http-helper';
 import { HttpRequest } from '../../login/login/login-controller-protocols';
 import { SurveyModel } from '../../survey/load-surveys/add-survey-controller-protocols';
 import { SaveSurveyResultController } from './save-survey-result-controller';
@@ -8,6 +8,9 @@ import { SaveSurveyResultController } from './save-survey-result-controller';
 const makeFakeRequest = (): HttpRequest => ({
   params: {
     surveyId: 'any_survey_id'
+  },
+  body: {
+    answer: 'any_answer'
   }
 });
 
@@ -57,5 +60,25 @@ describe('SaveSurveyResultController', () => {
     jest.spyOn(loadSurveyByIdStub, 'loadById').mockReturnValueOnce(new Promise(resolve => resolve(null)));
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('survey_id')));
+  });
+
+  test('Should return 500 if LoadSurveys throws', async () => {
+    const { sut, loadSurveyByIdStub } = makeSut();
+    jest.spyOn(loadSurveyByIdStub, 'loadById').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 403 if an invalid answer is provided', async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle({
+      params: {
+        surveyId: 'any_survey_id'
+      },
+      body: {
+        answer: 'wrong_answer'
+      }
+    });
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('answer')));
   });
 });
