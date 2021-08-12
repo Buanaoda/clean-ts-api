@@ -1,6 +1,5 @@
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { Collection } from 'mongodb';
-// import { AddSurveyModel } from '@/domain/usecases/survey/add-survey';
 import { sign } from 'jsonwebtoken';
 import request from 'supertest';
 import app from '@/main/config/app';
@@ -26,20 +25,6 @@ const makeAccessToken = async (): Promise<string> => {
   });
   return accessToken;
 };
-
-// const makeFakeSurveyData = (): AddSurveyModel => ({
-//   question: 'any_question',
-//   answers: [
-//     {
-//       image: 'any_image',
-//       answer: 'any_answer'
-//     },
-//     {
-//       answer: 'any_image'
-//     }
-//   ],
-//   date: new Date()
-// });
 
 describe('Survey Routes', () => {
   beforeAll(async () => {
