@@ -2,9 +2,9 @@ import request from 'supertest';
 import app from '@/main/config/app';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { Collection } from 'mongodb';
-import { AddSurveyParams } from '@/domain/usecases/survey/add-survey';
 import { sign } from 'jsonwebtoken';
 import env from '@/main/config/env';
+import { mockSurveyParams } from '@/domain/test';
 
 let surveyCollection: Collection;
 let accountCollection: Collection;
@@ -28,20 +28,6 @@ const makeAccessToken = async (): Promise<string> => {
   return accessToken;
 };
 
-const makeFakeSurveyData = (): AddSurveyParams => ({
-  question: 'any_question',
-  answers: [
-    {
-      image: 'any_image',
-      answer: 'any_answer'
-    },
-    {
-      answer: 'any_image'
-    }
-  ],
-  date: new Date()
-});
-
 describe('Survey Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
@@ -62,7 +48,7 @@ describe('Survey Routes', () => {
     test('Should return 403 on add survey without accessToken', async () => {
       await request(app)
         .post('/api/survey')
-        .send(makeFakeSurveyData())
+        .send(mockSurveyParams())
         .expect(403);
     });
 
@@ -71,7 +57,7 @@ describe('Survey Routes', () => {
       await request(app)
         .post('/api/survey')
         .set('x-access-token', accessToken)
-        .send(makeFakeSurveyData())
+        .send(mockSurveyParams())
         .expect(204);
     });
   });
@@ -85,7 +71,7 @@ describe('Survey Routes', () => {
   });
 
   test('Should return 200 on load surveys with valid accessToken', async () => {
-    await surveyCollection.insertMany([makeFakeSurveyData(), makeFakeSurveyData()]);
+    await surveyCollection.insertMany([mockSurveyParams(), mockSurveyParams()]);
     const accessToken = await makeAccessToken();
     await request(app)
       .get('/api/surveys')
