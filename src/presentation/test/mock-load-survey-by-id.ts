@@ -5,7 +5,7 @@ import { SurveyModel } from '../controllers/survey/load-surveys/add-survey-contr
 export const mockLoadSurveyById = (): LoadSurveyById => {
   class LoadSurveyByIdStub implements LoadSurveyById {
     async loadById (id: string): Promise<SurveyModel> {
-      return new Promise(resolve => resolve(mockSurveyModel()));
+      return Promise.resolve(mockSurveyModel());
     }
   }
   return new LoadSurveyByIdStub();

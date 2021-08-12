@@ -4,7 +4,7 @@ import { mockAccountModel } from '@/domain/test';
 export const mockAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
     async add (account: AddAccountParams): Promise<AccountModel> {
-      return new Promise(resolve => resolve(mockAccountModel()));
+      return Promise.resolve(mockAccountModel());
     }
   }
   return new AddAccountStub();
